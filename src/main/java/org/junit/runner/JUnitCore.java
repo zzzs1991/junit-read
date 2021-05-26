@@ -68,9 +68,9 @@ public class JUnitCore {
      */
     Result runMain(JUnitSystem system, String... args) {
         system.out().println("JUnit version " + Version.id());
-
+        // 解析命令行参数
         JUnitCommandLineParseResult jUnitCommandLineParseResult = JUnitCommandLineParseResult.parse(args);
-
+        // 创建命令行界面监听器
         RunListener listener = new TextListener(system);
         addListener(listener);
 
