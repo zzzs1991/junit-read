@@ -33,6 +33,7 @@ public class JUnitCore {
      * @param args names of classes in which to find tests to run
      */
     public static void main(String... args) {
+        // 命令行入口
         Result result = new JUnitCore().runMain(new RealSystem(), args);
         System.exit(result.wasSuccessful() ? 0 : 1);
     }

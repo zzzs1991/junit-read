@@ -15,6 +15,10 @@ import org.junit.runner.Result;
  * are abstract and have no implementation; override one or more methods to
  * receive events.
  * <p>
+ * 将此类的实例注册到RunNotifier上,可以在测试过程中收到一些事件的通知.
+ * </p>
+ *
+ * <p>
  * For example, suppose you have a <code>Cowbell</code>
  * class that you want to make a noise whenever a test fails. You could write:
  * <pre>
@@ -38,13 +42,20 @@ import org.junit.runner.Result;
  * have their {@link RunListener#testFailure(Failure)} called with a {@code Description}
  * of {@link Description#TEST_MECHANISM} to indicate the failure.
  * <p>
+ * 如果监听器报错了,其他监听器的testFailure方法会被调用,并且携带一个描述这个错误的Description
+ * </p>
+ * <p>
  * By default, JUnit will synchronize calls to your listener. If your listener
  * is thread-safe and you want to allow JUnit to call your listener from
  * multiple threads when tests are run in parallel, you can annotate your
  * test class with {@link RunListener.ThreadSafe}.
  * <p>
+ * 默认情况下 junit会同步调用这些监听器. 如果你的监听器实现是线程安全的 且你想让测试并发执行, 可以使用ThreadSafe注解
+ * </p>
+ * <p>
  * Listener methods will be called from the same thread as is running
  * the test, unless otherwise indicated by the method Javadoc
+ * 监听器方法会用当前做测试的线程进行调用
  *
  * @see org.junit.runner.JUnitCore
  * @since 4.0
@@ -54,7 +65,9 @@ public class RunListener {
     /**
      * Called before any tests have been run. This may be called on an
      * arbitrary thread.
-     *
+     * <p>
+     * 在测试开始前调用(随机线程)
+     * </p>
      * @param description describes the tests to be run
      */
     public void testRunStarted(Description description) throws Exception {
@@ -63,7 +76,9 @@ public class RunListener {
     /**
      * Called when all tests have finished. This may be called on an
      * arbitrary thread.
-     *
+     * <p>
+     * 在测试结束后调用(随机线程)
+     * </p>
      * @param result the summary of the test run, including all the tests that failed
      */
     public void testRunFinished(Result result) throws Exception {
@@ -73,6 +88,9 @@ public class RunListener {
      * Called when a test suite is about to be started. If this method is
      * called for a given {@link Description}, then {@link #testSuiteFinished(Description)}
      * will also be called for the same {@code Description}.
+     * <p>
+     *     在测试套件开始前
+     * </p>
      *
      * <p>Note that not all runners will call this method, so runners should
      * be prepared to handle {@link #testStarted(Description)} calls for tests
@@ -90,7 +108,9 @@ public class RunListener {
      * Called when a test suite has finished, whether the test suite succeeds or fails.
      * This method will not be called for a given {@link Description} unless
      * {@link #testSuiteStarted(Description)} was called for the same @code Description}.
-     *
+     * <p>
+     *     在测试套件结束后
+     * </p>
      * @param description the description of the test suite that just ran
      * @since 4.13
      */
@@ -99,7 +119,9 @@ public class RunListener {
 
     /**
      * Called when an atomic test is about to be started.
-     *
+     * <p>
+     *     在单元测试开始前
+     * </p>
      * @param description the description of the test that is about to be run
      * (generally a class and method name)
      */
@@ -108,7 +130,9 @@ public class RunListener {
 
     /**
      * Called when an atomic test has finished, whether the test succeeds or fails.
-     *
+     * <p>
+     *     在单元测试结束后
+     * </p>
      * @param description the description of the test that just ran
      */
     public void testFinished(Description description) throws Exception {
