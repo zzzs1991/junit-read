@@ -11,6 +11,9 @@ import org.junit.runners.model.RunnerBuilder;
  *
  * @since 4.6
  */
+/*
+Computer是计算 runner 和 suite 的 策略
+ */
 public class Computer {
     /**
      * Returns a new default computer, which runs tests in serial order

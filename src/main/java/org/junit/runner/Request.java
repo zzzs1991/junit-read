@@ -99,8 +99,11 @@ public abstract class Request {
      */
     public static Request classes(Computer computer, Class<?>... classes) {
         try {
+            // 创建runnerBuilder
             AllDefaultPossibilitiesBuilder builder = new AllDefaultPossibilitiesBuilder();
+            // 计算suite suite 是 Runner的实现
             Runner suite = computer.getSuite(builder, classes);
+            // 将runner包装成request并返回
             return runner(suite);
         } catch (InitializationError e) {
             return runner(new ErrorReportingRunner(e, classes));

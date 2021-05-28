@@ -127,9 +127,14 @@ class JUnitCommandLineParseResult {
         通过传入的computer来创建request
      */
     public Request createRequest(Computer computer) {
+        // 参数解析失败的集合如果为空进入if块
+        // parserErrors是runMain方法中JUnitCommandLineParseResult.parse()获得
         if (parserErrors.isEmpty()) {
+            // 创建request
+            // 传入computer策略, 和 参数中解析来的 测试类...
             Request request = Request.classes(
                     computer, classes.toArray(new Class<?>[classes.size()]));
+            // 添加过滤功能
             return applyFilterSpecs(request);
         } else {
             // 报告错误

@@ -81,6 +81,7 @@ public class AnnotatedBuilder extends RunnerBuilder {
     public Runner runnerForClass(Class<?> testClass) throws Exception {
         for (Class<?> currentTestClass = testClass; currentTestClass != null;
              currentTestClass = getEnclosingClassForNonStaticMemberClass(currentTestClass)) {
+            // 获取测试类中用@RunWith注解标注的类
             RunWith annotation = currentTestClass.getAnnotation(RunWith.class);
             if (annotation != null) {
                 return buildRunner(annotation.value(), testClass);
@@ -89,7 +90,7 @@ public class AnnotatedBuilder extends RunnerBuilder {
 
         return null;
     }
-
+    // 支持内部类
     private Class<?> getEnclosingClassForNonStaticMemberClass(Class<?> currentTestClass) {
         if (currentTestClass.isMemberClass() && !Modifier.isStatic(currentTestClass.getModifiers())) {
             return currentTestClass.getEnclosingClass();
@@ -101,6 +102,7 @@ public class AnnotatedBuilder extends RunnerBuilder {
     public Runner buildRunner(Class<? extends Runner> runnerClass,
             Class<?> testClass) throws Exception {
         try {
+            // 创建@RunWith注解中声明类的实例，并将测试类的class传入
             return runnerClass.getConstructor(Class.class).newInstance(testClass);
         } catch (NoSuchMethodException e) {
             try {

@@ -74,7 +74,7 @@ public class JUnitCore {
         // 创建命令行界面监听器
         RunListener listener = new TextListener(system);
         addListener(listener);
-
+        // 创建请求 运行并返回结果
         return run(jUnitCommandLineParseResult.createRequest(defaultComputer()));
     }
 
@@ -113,6 +113,7 @@ public class JUnitCore {
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
     public Result run(Request request) {
+        // 从Request中获取Runner并调用run方法
         return run(request.getRunner());
     }
 
@@ -130,12 +131,17 @@ public class JUnitCore {
      * Do not use. Testing purposes only.
      */
     public Result run(Runner runner) {
+        // 构建运行结果
         Result result = new Result();
+        // 创建运行结果的监听器
         RunListener listener = result.createListener();
         notifier.addFirstListener(listener);
         try {
+            // 通知监听器开始运行测试
             notifier.fireTestRunStarted(runner.getDescription());
+            // 开始运行
             runner.run(notifier);
+            // 通知监听器测试运行结束
             notifier.fireTestRunFinished(result);
         } finally {
             removeListener(listener);

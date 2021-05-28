@@ -67,6 +67,7 @@ public abstract class RunnerBuilder {
      */
     public Runner safeRunnerForClass(Class<?> testClass) {
         try {
+            // 模板方法模式 调用抽象方法
             Runner runner = runnerForClass(testClass);
             if (runner != null) {
                 configureRunner(runner);
@@ -105,11 +106,14 @@ public abstract class RunnerBuilder {
      */
     public List<Runner> runners(Class<?> parent, Class<?>[] children)
             throws InitializationError {
+        // 添加父class，此时由Suite调用过来时为null
         addParent(parent);
 
         try {
+            // 此时的children是从开始一路传递下来的测试类的class
             return runners(children);
         } finally {
+            // 移除父class
             removeParent(parent);
         }
     }
@@ -122,6 +126,8 @@ public abstract class RunnerBuilder {
     private List<Runner> runners(Class<?>[] children) {
         List<Runner> runners = new ArrayList<Runner>();
         for (Class<?> each : children) {
+            // 循环遍历所有测试类的class，构建Runner
+            // 由此可以发现每个测试类对应一个Runner
             Runner childRunner = safeRunnerForClass(each);
             if (childRunner != null) {
                 runners.add(childRunner);

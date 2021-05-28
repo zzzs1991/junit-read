@@ -60,6 +60,14 @@ import org.junit.validator.TestClassValidator;
  *
  * @since 4.5
  */
+/*
+实现org.junit包中的注释所定义的JUnit 4标准测试用例类模型。
+许多用户永远不会注意到此类：它是默认的测试类运行器，但其行为应与旧的测试类运行器（JUnit4ClassRunner）完全相同。
+对于自定义JUnit运行器(对默认行为的微小更改)的编写者而言，BlockJUnit4ClassRunner具有一些优点,，但是：
+它具有基于Statements的简单得多的实现，允许将新操作插入执行流中的适当点。
+它已发布，并鼓励扩展和重用，而JUnit4ClassRunner处于内部包中，现已弃用。
+反过来，在2009年，我们引入了Rules。 在许多情况下，扩展BlockJUnit4ClassRunner是添加新行为所必需的，可以使用Rules，这使扩展更加可重用和可组合。
+ */
 public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     private static TestClassValidator PUBLIC_CLASS_VALIDATOR = new PublicClassValidator();
 

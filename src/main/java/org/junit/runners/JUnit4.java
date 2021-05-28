@@ -15,6 +15,12 @@ import org.junit.runners.model.TestClass;
  *
  * @since 4.5
  */
+/*
+当前默认的JUnit 4类运行器的别名，以供将来使用。
+如果将来的JUnit版本更改默认的Runner类，则它们还将更改该类的定义。
+希望将一个类明确标记为JUnit 4类的开发人员应使用@RunWith（JUnit4.class），而不是使用@RunWith（BlockJUnit4ClassRunner.class）
+例如，在JUnit 4.5中。 这是使用此类的唯一方法-依赖于此类的实现细节的任何扩展都可能在将来的版本中破坏。
+ */
 public final class JUnit4 extends BlockJUnit4ClassRunner {
     /**
      * Constructs a new instance of the default runner

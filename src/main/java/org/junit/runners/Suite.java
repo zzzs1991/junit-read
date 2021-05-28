@@ -24,6 +24,12 @@ import org.junit.runners.model.RunnerBuilder;
  *
  * @since 4.0
  */
+/*
+将Suite用作运行程序可以使您手动构建一个包含来自多个类的测试的套件。
+它是JUnit 3.8.x静态junit.framework.Test suite（）方法的JUnit 4等效。
+ 若要使用它，请使用@RunWith（Suite.class）和@SuiteClasses（{TestClass1.class，...}）注释类。
+ 当您运行此类时，它将运行所有套件类中的所有测试。
+ */
 public class Suite extends ParentRunner<Runner> {
     /**
      * Returns an empty suite.
@@ -39,6 +45,9 @@ public class Suite extends ParentRunner<Runner> {
     /**
      * The <code>SuiteClasses</code> annotation specifies the classes to be run when a class
      * annotated with <code>@RunWith(Suite.class)</code> is run.
+     */
+    /*
+        带有@RunWith注解的类运行时 @SuiteClasses注解可以指定要运行的测试类
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
