@@ -26,6 +26,15 @@ import org.junit.runners.model.InitializationError;
  *
  * @since 4.0
  */
+/*
+Request是要运行的测试的抽象描述。
+较旧的JUnit版本不需要这样的概念-要运行的测试是通过包含测试的类或@Test树来描述的。
+但是，我们希望支持过滤和排序，因此我们需要比测试本身更抽象以及比类更丰富的概念。
+
+JUnit运行测试时的流程是，request指定一些要运行的测试
+                        -> 为request所隐含的每个类创建一个runner
+                        -> runner返回详细的description，该description是要运行的测试的树形结构。
+ */
 public abstract class Request {
     /**
      * Create a <code>Request</code> that, when processed, will run a single test.
@@ -35,6 +44,11 @@ public abstract class Request {
      * @param clazz the class of the test
      * @param methodName the name of the test
      * @return a <code>Request</code> that will cause a single test be run
+     */
+    /*
+        创建一个Request，该Request在处理后将运行一个测试。
+        这是通过过滤掉所有其他测试来完成的。
+        此方法用于支持重新运行单个测试。
      */
     public static Request method(Class<?> clazz, String methodName) {
         Description method = Description.createTestDescription(clazz, methodName);
@@ -48,6 +62,10 @@ public abstract class Request {
      * @param clazz the class containing the tests
      * @return a <code>Request</code> that will cause all tests in the class to be run
      */
+    /*
+        创建一个Request，该Request在处理后将运行一个类中的所有测试。
+        奇怪的名称是必需的，因为class是保留字。
+     */
     public static Request aClass(Class<?> clazz) {
         return new ClassRequest(clazz);
     }
@@ -58,6 +76,10 @@ public abstract class Request {
      *
      * @param clazz the class containing the tests
      * @return a <code>Request</code> that will cause all tests in the class to be run
+     */
+    /*
+        创建一个Request，该Request在处理后将运行一个类中的所有测试。
+        类中的suite()会被忽略
      */
     public static Request classWithoutSuiteMethod(Class<?> clazz) {
         return new ClassRequest(clazz, false);
@@ -70,6 +92,10 @@ public abstract class Request {
      * @param computer Helps construct Runners from classes
      * @param classes the classes containing the tests
      * @return a <code>Request</code> that will cause all tests in the classes to be run
+     */
+    /*
+        创建一个Request，该Request在处理后将运行一组类中的所有测试。
+        Computer协助构建Runners
      */
     public static Request classes(Computer computer, Class<?>... classes) {
         try {
@@ -88,6 +114,10 @@ public abstract class Request {
      * @param classes the classes containing the tests
      * @return a <code>Request</code> that will cause all tests in the classes to be run
      */
+    /*
+        创建一个Request，该Request在处理后将运行一组类中的所有测试。
+        选择默认Computer
+     */
     public static Request classes(Class<?>... classes) {
         return classes(JUnitCore.defaultComputer(), classes);
     }
@@ -96,6 +126,9 @@ public abstract class Request {
     /**
      * Creates a {@link Request} that, when processed, will report an error for the given
      * test class with the given cause.
+     */
+    /*
+        创建一个Request，该Request在处理后将报告给定原因的给定测试类的错误。
      */
     public static Request errorReport(Class<?> klass, Throwable cause) {
         return runner(new ErrorReportingRunner(klass, cause));
@@ -128,6 +161,9 @@ public abstract class Request {
      * @param filter The {@link Filter} to apply to this Request
      * @return the filtered Request
      */
+    /*
+        用过滤器过滤
+     */
     public Request filterWith(Filter filter) {
         return new FilterRequest(this, filter);
     }
@@ -141,6 +177,9 @@ public abstract class Request {
      *
      * @param desiredDescription {@code Description} of those tests that should be run
      * @return the filtered Request
+     */
+    /*
+        根据给定的Description来匹配过滤.
      */
     public Request filterWith(Description desiredDescription) {
         return filterWith(Filter.matchMethodDescription(desiredDescription));
@@ -167,6 +206,9 @@ public abstract class Request {
      *
      * @param comparator definition of the order of the tests in this Request
      * @return a Request with ordered Tests
+     */
+    /*
+        对测试进行排序
      */
     public Request sortWith(Comparator<Description> comparator) {
         return new SortingRequest(this, comparator);
@@ -195,6 +237,9 @@ public abstract class Request {
      *
      * @return a Request with ordered Tests
      * @since 4.13
+     */
+    /*
+        按给定顺序
      */
     public Request orderWith(Ordering ordering) {
         return new OrderingRequest(this, ordering);
