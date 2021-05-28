@@ -22,6 +22,9 @@ import org.junit.runner.notification.RunListener;
  *
  * @since 4.0
  */
+/*
+Result将收集并汇总来自运行多个测试的信息。 计算所有测试-从失败的测试中收集其他信息。
+ */
 public class Result implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final ObjectStreamField[] serialPersistentFields =
