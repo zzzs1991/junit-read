@@ -9,9 +9,15 @@ import org.junit.runner.FilterFactory.FilterNotCreatedException;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runners.model.InitializationError;
 
+/*
+junit命令行解析结果
+ */
 class JUnitCommandLineParseResult {
+    // 解析出来的过滤器参数
     private final List<String> filterSpecs = new ArrayList<String>();
+    // 解析出来的类
     private final List<Class<?>> classes = new ArrayList<Class<?>>();
+    // 解析时的异常
     private final List<Throwable> parserErrors = new ArrayList<Throwable>();
 
     /**
@@ -38,6 +44,9 @@ class JUnitCommandLineParseResult {
      *
      * @param args Arguments
      */
+    /*
+        解析参数
+     */
     public static JUnitCommandLineParseResult parse(String[] args) {
         JUnitCommandLineParseResult result = new JUnitCommandLineParseResult();
 
@@ -47,6 +56,9 @@ class JUnitCommandLineParseResult {
     }
 
     private void parseArgs(String[] args) {
+        // 先解析选项 再解析参数
+        // 选项就是 --filter
+        // 参数就是 指定的测试类
         parseParameters(parseOptions(args));
     }
 
@@ -111,12 +123,16 @@ class JUnitCommandLineParseResult {
      *
      * @param computer {@link Computer} to be used.
      */
+    /*
+        通过传入的computer来创建request
+     */
     public Request createRequest(Computer computer) {
         if (parserErrors.isEmpty()) {
             Request request = Request.classes(
                     computer, classes.toArray(new Class<?>[classes.size()]));
             return applyFilterSpecs(request);
         } else {
+            // 报告错误
             return errorReport(new InitializationError(parserErrors));
         }
     }
