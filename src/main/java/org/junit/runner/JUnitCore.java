@@ -21,6 +21,13 @@ import org.junit.runner.notification.RunNotifier;
  * @see org.junit.runner.Request
  * @since 4.0
  */
+/*
+JUnitCore 是用于运行测试的外观。
+它支持运行 JUnit 4 测试、JUnit 3.8.x 测试和混合测试。
+要从命令行运行测试，请运行 java org.junit.runner.JUnitCore TestClass1 TestClass2 ....
+对于一次性测试运行，请使用静态方法 runClasses(Class[])。
+如果要添加特殊监听器，请先创建 JUnitCore 实例并使用它来运行测试。
+ */
 public class JUnitCore {
     private final RunNotifier notifier = new RunNotifier();
 
@@ -31,6 +38,12 @@ public class JUnitCore {
      * stack traces for all failed tests after the tests all complete.
      *
      * @param args names of classes in which to find tests to run
+     */
+    /*
+    运行 args 中命名的类中包含的测试。
+    如果所有测试都成功运行，则以状态 0 退出。否则以状态 1 退出。
+    在测试运行时编写反馈
+    在测试全部完成后为所有失败的测试编写堆栈跟踪。
      */
     public static void main(String... args) {
         // 命令行入口
@@ -46,6 +59,10 @@ public class JUnitCore {
      * @param classes Classes in which to find tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
+    /*
+    运行包含在类中的测试。 在测试运行时编写反馈并在所有测试完成后为所有失败的测试编写堆栈跟踪。
+    这类似于 main(String[])，但旨在以编程方式使用。
+     */
     public static Result runClasses(Class<?>... classes) {
         return runClasses(defaultComputer(), classes);
     }
@@ -58,6 +75,10 @@ public class JUnitCore {
      * @param computer Helps construct Runners from classes
      * @param classes  Classes in which to find tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
+     */
+    /*
+    运行包含在类中的测试。 在测试运行时编写反馈并在所有测试完成后为所有失败的测试编写堆栈跟踪。
+    这类似于 main(String[])，但旨在以编程方式使用。
      */
     public static Result runClasses(Computer computer, Class<?>... classes) {
         return new JUnitCore().run(computer, classes);
@@ -91,6 +112,12 @@ public class JUnitCore {
      * @param classes the classes containing tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
+    /*
+    在类中运行所有测试。
+
+    classes - 包含测试的类
+    Result - 描述测试运行和失败测试的详细信息的结果
+     */
     public Result run(Class<?>... classes) {
         return run(defaultComputer(), classes);
     }
@@ -102,6 +129,11 @@ public class JUnitCore {
      * @param classes the classes containing tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
+    /*
+    在类中运行所有测试。
+
+    computer - 帮助从class中构建runners
+     */
     public Result run(Computer computer, Class<?>... classes) {
         return run(Request.classes(computer, classes));
     }
@@ -111,6 +143,11 @@ public class JUnitCore {
      *
      * @param request the request describing tests
      * @return a {@link Result} describing the details of the test run and the failed tests.
+     */
+    /*
+    运行请求中包含的所有测试。
+
+    request – 描述测试的请求
      */
     public Result run(Request request) {
         // 从Request中获取Runner并调用run方法
@@ -123,12 +160,20 @@ public class JUnitCore {
      * @param test the old-style test
      * @return a {@link Result} describing the details of the test run and the failed tests.
      */
+    /*
+    运行 JUnit 3.8.x 测试中包含的所有测试。 这里是为了向后兼容。
+
+    junit.framework.Test – 旧式测试
+     */
     public Result run(junit.framework.Test test) {
         return run(new JUnit38ClassRunner(test));
     }
 
     /**
      * Do not use. Testing purposes only.
+     */
+    /*
+    不使用。 仅用于测试目的。 ???
      */
     public Result run(Runner runner) {
         // 构建运行结果
@@ -155,6 +200,9 @@ public class JUnitCore {
      * @param listener the listener to add
      * @see org.junit.runner.notification.RunListener
      */
+    /*
+    添加一个监听器以在测试运行时收到通知。
+     */
     public void addListener(RunListener listener) {
         notifier.addListener(listener);
     }
@@ -164,10 +212,16 @@ public class JUnitCore {
      *
      * @param listener the listener to remove
      */
+    /*
+    移除一个监听器
+     */
     public void removeListener(RunListener listener) {
         notifier.removeListener(listener);
     }
 
+    /*
+    默认的computer
+     */
     static Computer defaultComputer() {
         return new Computer();
     }
