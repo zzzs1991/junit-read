@@ -7,6 +7,9 @@ package org.junit.runners.model;
  *
  * @since 4.5
  */
+/*
+表示在运行JUnit测试套件的过程中要在运行时执行的一个或多个操作。
+ */
 public abstract class Statement {
     /**
      * Run the action, throwing a {@code Throwable} if anything goes wrong.

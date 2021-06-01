@@ -26,6 +26,7 @@ public final class JUnit4 extends BlockJUnit4ClassRunner {
      * Constructs a new instance of the default runner
      */
     public JUnit4(Class<?> klass) throws InitializationError {
+        // 创建testClass
         super(new TestClass(klass));
     }
 }

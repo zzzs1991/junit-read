@@ -88,7 +88,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * Constructs a new {@code ParentRunner} that will run {@code @TestClass}
      */
     protected ParentRunner(Class<?> testClass) throws InitializationError {
+        // 创建testClasses
         this.testClass = createTestClass(testClass);
+        // 校验
         validate();
     }
 
@@ -209,12 +211,19 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      *
      * @return {@code Statement}
      */
+    /*
+        处理 类代码块
+     */
     protected Statement classBlock(final RunNotifier notifier) {
         Statement statement = childrenInvoker(notifier);
         if (!areAllChildrenIgnored()) {
+            // 处理@BeforeClass
             statement = withBeforeClasses(statement);
+            // 处理@AfterClass
             statement = withAfterClasses(statement);
+            // 处理@Rule
             statement = withClassRules(statement);
+            // 处理线程中断隔离
             statement = withInterruptIsolation(statement);
         }
         return statement;
@@ -286,7 +295,9 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * on each object returned by {@link #getChildren()} (subject to any imposed
      * filter and sort)
      */
+    // 返回包裹了runChildren的statement
     protected Statement childrenInvoker(final RunNotifier notifier) {
+        // 包裹了回调方法
         return new Statement() {
             @Override
             public void evaluate() {
@@ -323,6 +334,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private void runChildren(final RunNotifier notifier) {
+        // 方法执行器
         final RunnerScheduler currentScheduler = scheduler;
         try {
             for (final T each : getFilteredChildren()) {
@@ -403,13 +415,19 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
         return description;
     }
 
+    /*
+        runner
+     */
     @Override
     public void run(final RunNotifier notifier) {
+        // 包装一下通知器
         EachTestNotifier testNotifier = new EachTestNotifier(notifier,
                 getDescription());
         testNotifier.fireTestSuiteStarted();
         try {
+            // 获取statement
             Statement statement = classBlock(notifier);
+            // 执行测试
             statement.evaluate();
         } catch (AssumptionViolatedException e) {
             testNotifier.addFailedAssumption(e);
@@ -527,6 +545,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
     }
 
     private List<T> getFilteredChildren() {
+        // 双端检锁 延迟加载
         if (filteredChildren == null) {
             childrenLock.lock();
             try {

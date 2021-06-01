@@ -8,6 +8,9 @@ import java.util.List;
  *
  * @since 4.7
  */
+/*
+FrameworkField和FrameworkMethod的父类
+ */
 public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
         Annotatable {
     abstract boolean isShadowedBy(T otherMember);
@@ -15,7 +18,9 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
     T handlePossibleBridgeMethod(List<T> members) {
         for (int i = members.size() - 1; i >=0; i--) {
             T otherMember = members.get(i);
+            // 是不是父类方法
             if (isShadowedBy(otherMember)) {
+                // 是不是泛型化的桥接方法
                 if (otherMember.isBridgeMethod()) {
                     /*
                      *  We need to return the previously-encountered bridge method
@@ -26,6 +31,7 @@ public abstract class FrameworkMember<T extends FrameworkMember<T>> implements
                     return otherMember;
                 }
                 // We found a shadowed member that isn't a bridge method. Ignore it.
+                // 忽略父类方法
                 return null;
             }
         }

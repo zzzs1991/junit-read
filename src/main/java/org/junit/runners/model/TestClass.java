@@ -28,6 +28,12 @@ import org.junit.internal.MethodSorter;
  *
  * @since 4.5
  */
+/*
+    包装一个要运行的类
+    提供方法校验, 注解搜索
+
+    测试类都抽象为一个TestClass
+ */
 public class TestClass implements Annotatable {
     private static final FieldComparator FIELD_COMPARATOR = new FieldComparator();
     private static final MethodComparator METHOD_COMPARATOR = new MethodComparator();
@@ -44,27 +50,34 @@ public class TestClass implements Annotatable {
      */
     public TestClass(Class<?> clazz) {
         this.clazz = clazz;
+        // 检验测试类是否有多个构造方法
         if (clazz != null && clazz.getConstructors().length > 1) {
             throw new IllegalArgumentException(
                     "Test class can only have one constructor");
         }
-
+        // 创建以Annotation为key，以 测试方法 list 为value的map
         Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations =
                 new LinkedHashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+        // 创建以Annotation为key，以 测试类中属性 list 为value的map
         Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations =
                 new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
-
+        // 扫描测试类中所有被注解过的属性和方法
+        // 并将结果填充到以上两个集合中
         scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
 
+        // 将map深度的变为不可变集合
         this.methodsForAnnotations = makeDeeplyUnmodifiable(methodsForAnnotations);
         this.fieldsForAnnotations = makeDeeplyUnmodifiable(fieldsForAnnotations);
     }
 
     protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
+        // 遍历测试类，及测试类所有父类
         for (Class<?> eachClass : getSuperClasses(clazz)) {
+            // 处理测试类中的每一个测试方法，在处理前先进行排序
             for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
                 addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
             }
+            // 处理测试类中的属性，处理前也会进行排序
             // ensuring fields are sorted to make sure that entries are inserted
             // and read from fieldForAnnotations in a deterministic order
             for (Field eachField : getSortedDeclaredFields(eachClass)) {
@@ -73,6 +86,7 @@ public class TestClass implements Annotatable {
         }
     }
 
+    // 获取类中字段 并排序
     private static Field[] getSortedDeclaredFields(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         Arrays.sort(declaredFields, FIELD_COMPARATOR);
@@ -81,13 +95,18 @@ public class TestClass implements Annotatable {
 
     protected static <T extends FrameworkMember<T>> void addToAnnotationLists(T member,
             Map<Class<? extends Annotation>, List<T>> map) {
+        // 遍历测试方法或者属性上的注解
         for (Annotation each : member.getAnnotations()) {
             Class<? extends Annotation> type = each.annotationType();
+            // 获取指定type注释的成员
             List<T> members = getAnnotatedMembers(map, type, true);
+            // 处理可能的桥接方法
             T memberToAdd = member.handlePossibleBridgeMethod(members);
             if (memberToAdd == null) {
                 return;
             }
+            // 将同一注解下所有方法或者属性添加到List中
+            // 如果有@Before或者@BeforeClass，将会放在List中的第一个元素位置
             if (runsTopToBottom(type)) {
                 members.add(0, memberToAdd);
             } else {
@@ -96,6 +115,7 @@ public class TestClass implements Annotatable {
         }
     }
 
+    // 深度的变为不可变集合
     private static <T extends FrameworkMember<T>> Map<Class<? extends Annotation>, List<T>>
             makeDeeplyUnmodifiable(Map<Class<? extends Annotation>, List<T>> source) {
         Map<Class<? extends Annotation>, List<T>> copy =
@@ -154,6 +174,7 @@ public class TestClass implements Annotatable {
         return new ArrayList<T>(values);
     }
 
+    // 获取指定type注释的成员
     private static <T> List<T> getAnnotatedMembers(Map<Class<? extends Annotation>, List<T>> map,
             Class<? extends Annotation> type, boolean fillIfAbsent) {
         if (!map.containsKey(type) && fillIfAbsent) {
@@ -163,11 +184,13 @@ public class TestClass implements Annotatable {
         return members == null ? Collections.<T>emptyList() : members;
     }
 
+    // 是否需要放到最底部
     private static boolean runsTopToBottom(Class<? extends Annotation> annotation) {
         return annotation.equals(Before.class)
                 || annotation.equals(BeforeClass.class);
     }
 
+    // 获取类和他的父类
     private static List<Class<?>> getSuperClasses(Class<?> testClass) {
         List<Class<?>> results = new ArrayList<Class<?>>();
         Class<?> current = testClass;

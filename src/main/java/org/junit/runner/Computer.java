@@ -28,6 +28,7 @@ public class Computer {
      */
     public Runner getSuite(final RunnerBuilder builder,
             Class<?>[] classes) throws InitializationError {
+        // new一个匿名的RunnerBuilder runnerForClass方法回调传入的builder的对应方法
         return new Suite(new RunnerBuilder() {
             @Override
             public Runner runnerForClass(Class<?> testClass) throws Throwable {

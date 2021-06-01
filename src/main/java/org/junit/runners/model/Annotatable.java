@@ -7,6 +7,9 @@ import java.lang.annotation.Annotation;
  * 
  * @since 4.12
  */
+/*
+有注解的模型元素
+ */
 public interface Annotatable {
     /**
      * Returns the model elements' annotations.

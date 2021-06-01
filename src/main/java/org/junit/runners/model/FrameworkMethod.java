@@ -16,6 +16,9 @@ import org.junit.internal.runners.model.ReflectiveCallable;
  *
  * @since 4.5
  */
+/*
+测试类中的每一个方法都抽象为FrameworkMethod
+ */
 public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
     private final Method method;
 
@@ -23,12 +26,13 @@ public class FrameworkMethod extends FrameworkMember<FrameworkMethod> {
      * Returns a new {@code FrameworkMethod} for {@code method}
      */
     public FrameworkMethod(Method method) {
+        // 判空
         if (method == null) {
             throw new NullPointerException(
                     "FrameworkMethod cannot be created without an underlying method.");
         }
         this.method = method;
-
+        // 如果是public的方法 将access设置为true
         if (isPublic()) {
             // This method could be a public method in a package-scope base class
             try {

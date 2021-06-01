@@ -96,18 +96,24 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
     // Implementation of ParentRunner
     //
 
+    // 真正执行测试方法
     @Override
     protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+        // 给method创建描述
         Description description = describeChild(method);
         if (isIgnored(method)) {
+            // 如果方法标记了@Ignore 通知忽略
             notifier.fireTestIgnored(description);
         } else {
+            // 将方法包装成statement 并设置回调
             Statement statement = new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
+                    // 回调methodBlock
                     methodBlock(method).evaluate();
                 }
             };
+            // 真正执行method 并执行一些通知
             runLeaf(statement, description, notifier);
         }
     }
@@ -121,6 +127,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         return child.getAnnotation(Ignore.class) != null;
     }
 
+    // 描述方法
     @Override
     protected Description describeChild(FrameworkMethod method) {
         Description description = methodDescriptions.get(method);
@@ -136,6 +143,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
 
     @Override
     protected List<FrameworkMethod> getChildren() {
+        // 计算children节点的方法
         return computeTestMethods();
     }
 
@@ -149,6 +157,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
      * are not overridden.
      */
     protected List<FrameworkMethod> computeTestMethods() {
+        // 获取@Test的方法
         return getTestClass().getAnnotatedMethods(Test.class);
     }
 
@@ -314,6 +323,7 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             test = new ReflectiveCallable() {
                 @Override
                 protected Object runReflectiveCall() throws Throwable {
+                    // 创建测试
                     return createTest(method);
                 }
             }.run();
@@ -321,12 +331,20 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
             return new Fail(e);
         }
 
+        // 光光测试方法
         Statement statement = methodInvoker(method, test);
+        // 对方法进行包装 around
+        // 处理@Test中的excepted
         statement = possiblyExpectingExceptions(method, test, statement);
+        // 处理@Test中的timeOut
         statement = withPotentialTimeout(method, test, statement);
+        // 处理@Before
         statement = withBefores(method, test, statement);
+        // 处理@After
         statement = withAfters(method, test, statement);
+        // 处理@Ruler
         statement = withRules(method, test, statement);
+        // 处理中断隔离
         statement = withInterruptIsolation(statement);
         return statement;
     }

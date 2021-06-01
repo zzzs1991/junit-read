@@ -11,6 +11,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
  *
  * @since 4.7
  */
+/*
+测试类中的每一个属性都抽象为FrameworkField
+ */
 public class FrameworkField extends FrameworkMember<FrameworkField> {
     private final Field field;
 
